@@ -118,7 +118,6 @@ function VT_MS_diffusion_coefficient(model::AbstractEntropyScalingModel, V, T, z
     N = length(model)
     params_diff = model.params[DiffusionCoefficient()]
     param = _init_msdiff_param(params_diff) 
-    
     Ðᵢⱼ = zero(MSDiffusionMatrix, N)
     for i in 1:N, j in i+1:N
         _set_msdiff_param!(param, params_diff, i, j)
@@ -126,11 +125,12 @@ function VT_MS_diffusion_coefficient(model::AbstractEntropyScalingModel, V, T, z
         
         # get all segments of the mixture
         m_full = model.eos.params.segment.values
-        sˢ = -s / (CL.Rgas() * sum(z .* m_full))
-        
-        # pseudo binary approach
-        sum_x = z[i] + z[j]
-        x_pseudo = [z[i] / sum_x, z[j] / sum_x]
+        sˢ = -s / (CL.Rgas() * sum(z.* m_full))
+
+        # pseudo binary approach with muggianu projection
+        xi_ij = (1+z[i]-z[j]) / 2
+        xj_ij = (1+z[j]-z[i]) / 2
+        x_pseudo = [xi_ij, xj_ij]
 
         Dˢ = scaling_model(param, sˢ, x_pseudo)
 
