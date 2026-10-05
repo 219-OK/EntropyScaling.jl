@@ -1,6 +1,8 @@
 Manifest.toml
 .vscode
 docs/build/
+.vitepress/
+node_modules/
 scripts/
 *.cov
 debug*
