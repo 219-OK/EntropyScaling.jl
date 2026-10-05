@@ -124,7 +124,7 @@ function VT_MS_diffusion_coefficient(model::AbstractEntropyScalingModel, V, T, z
         s = CL.VT_entropy_res(model.eos, V, T, z)
         
         # get all segments of the mixture
-        m_full = model.eos.params.segment.values
+        m_full = get_segment(model.eos.params)
         sˢ = -s / (CL.Rgas() * sum(z.* m_full))
 
         # pseudo binary approach with muggianu projection
@@ -138,7 +138,7 @@ function VT_MS_diffusion_coefficient(model::AbstractEntropyScalingModel, V, T, z
         prop = EntropyScaling.transport_property(param)
         # split model for pseudo-binary eos
         eos_bin = CL.split_model(model.eos, [[i, j]])
-        Y₀⁺    = property_CE_plus(prop, param.ce, eos_bin[1], T, x_pseudo)      # needs full mixture z
+        Y₀⁺    = property_CE_plus(prop, param.ce, eos_bin[1], T, x_pseudo)
         Y₀⁺min = mix_CE(prop, param.ce, param.Y₀⁺min.values, x_pseudo)
         Ws  = W(sˢ)
         base = BaseParam(prop,param.ce.Mw)
